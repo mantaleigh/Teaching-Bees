@@ -1,0 +1,268 @@
+<html>
+	<head>
+		<title>Bees?</title>
+		<script src="http://cloud.github.com/downloads/processing-js/processing-js/processing-1.4.1.min.js"></script>
+		<script type="text/processing" data-processing-target="mycanvas">
+
+		var CANVAS_HEIGHT = 600;
+		var CANVAS_WIDTH = 800;
+
+		// will hold the fruits that need to be dropped
+		var fruits = [];
+
+		// -----------------------------------------------------------
+		// ---------------- BUSY BEE ---------------------------------
+		// -----------------------------------------------------------
+		// class definition provided
+		var BusyBee = function(initialX, initialY, size, color1, color2, isFacingRight) { 
+			this.x = initialX;
+			this.y = initialY;
+			this.size = size; 
+			this.color1 = color1; // array of r,g,b values
+			this.color2 = color2; // array of r,g,b values
+			this.isFacingRight = isFacingRight;
+			this.speed = (1/this.size) * 250; // speed is a function of size
+
+			// draw function is provided
+			this.drawBusyBee = function() { 
+				// ---- body ----
+				fill(color1[0], color1[1], color1[2]);
+				ellipse(this.x, this.y, size, size);
+				// ---- stripes ---- (these are all very arbitary, test & check, values)
+				fill(color2[0], color2[1], color2[2]);
+				rect(this.x - size/10, this.y-(size/2), 0.2*size, size);
+				rect(this.x + size/5, this.y-(size/2.3), 0.08*size, size*0.85);
+				rect(this.x - size/10 - size/6, this.y-(size/2.3), 0.08*size, size*0.85);
+
+				if (this.isFacingRight) {
+					// ---- head ----
+					fill(color1[0], color1[1], color1[2]);
+					ellipse(this.x + size/3, this.y - size/3, 0.5*size, 0.5*size);
+					// ---- stinger ----
+					fill(0,0,0);
+					triangle(this.x - size/2, this.y-size/20, this.x - size/2, this.y+size/20, this.x-size/1.5, this.y);
+
+					// ---- wings ----
+					noFill();
+					ellipse(this.x-size/5, this.y-size/2, size*0.6, size*0.6);
+					ellipse(this.x-size/3, this.y-size/3, size*0.6, size*0.6);
+				} else { // direction is left
+					// ---- head ----
+					fill(color1[0], color1[1], color1[2]);
+					ellipse(this.x - size/3, this.y - size/3, 0.5*size, 0.5*size);
+					// ---- stinger ----
+					fill(0,0,0);
+					triangle(this.x + size/2, this.y+size/20, this.x + size/2, this.y-size/20, this.x+size/1.5, this.y);
+
+					// ---- wings ----
+					noFill();
+					ellipse(this.x+size/5, this.y-size/2, size*0.6, size*0.6);
+					ellipse(this.x+size/3, this.y-size/3, size*0.6, size*0.6);
+				}
+			};
+
+
+			// theoretically, this is one of the functions they would code
+			this.moveBusyBee = function() {
+
+				// need good scaffolding on how we program "chance" using random
+
+				// gets a random number between 1 and 30 -- might want to provide this code, since it's not obvious. Otherwise it could be a challenge about reading documentation?
+				// I found line 62 really easily on W3C when looking for random numbers in a range in javascript.
+				var randomNum = (Math.floor(Math.random()*30 + 1));
+
+				// flips randomly
+				if (randomNum === 1) { 
+					this.isFacingRight = !this.isFacingRight;
+				} 
+
+				// normal movement, flipping when it gets to either edge
+				if (this.isFacingRight) { // going right
+					if (this.x > CANVAS_WIDTH-this.size) { // hits right side
+						this.isFacingRight = !this.isFacingRight; // this is most likely not how they're going to switch it, but you know
+					} else { 
+						this.x = this.x + this.speed;
+					}
+				} else { // going left
+					if (this.x < this.size/2) { // hits left side
+						this.isFacingRight = !this.isFacingRight;
+					} else {
+						this.x = this.x - this.speed;
+					}
+				}
+			}; // close moveBusyBee
+		}; // close BusyBee
+
+
+		// -----------------------------------------------------------
+		// --------------- FRUIT BEE ---------------------------------
+		// -----------------------------------------------------------
+		var FruitBee = function(initialX, initialY, size, color1, color2, isFacingRight) { 
+			this.x = initialX;
+			this.y = initialY;
+			this.size = size; 
+			this.color1 = color1; // array of r,g,b values
+			this.color2 = color2; // array of r,g,b values
+			this.isFacingRight = isFacingRight;
+			this.speed = (1/this.size) * 250; // speed is a function of size
+
+			// draw function is provided
+			this.drawFruitBee = function() { 
+				// ---- body ----
+				fill(color1[0], color1[1], color1[2]);
+				ellipse(this.x, this.y, size, size);
+				// ---- stripes ---- (these are all very arbitary, test & check, values)
+				fill(color2[0], color2[1], color2[2]);
+				rect(this.x - size/10, this.y-(size/2), 0.2*size, size);
+				rect(this.x + size/5, this.y-(size/2.3), 0.08*size, size*0.85);
+				rect(this.x - size/10 - size/6, this.y-(size/2.3), 0.08*size, size*0.85);
+
+				if (this.isFacingRight) {
+					// ---- head ----
+					fill(color1[0], color1[1], color1[2]);
+					ellipse(this.x + size/3, this.y - size/3, 0.5*size, 0.5*size);
+					// ---- stinger ----
+					fill(0,0,0);
+					triangle(this.x - size/2, this.y-size/20, this.x - size/2, this.y+size/20, this.x-size/1.5, this.y);
+
+					// ---- wings ----
+					noFill();
+					ellipse(this.x-size/5, this.y-size/2, size*0.6, size*0.6);
+					ellipse(this.x-size/3, this.y-size/3, size*0.6, size*0.6);
+				} else { // direction is left
+					// ---- head ----
+					fill(color1[0], color1[1], color1[2]);
+					ellipse(this.x - size/3, this.y - size/3, 0.5*size, 0.5*size);
+					// ---- stinger ----
+					fill(0,0,0);
+					triangle(this.x + size/2, this.y+size/20, this.x + size/2, this.y-size/20, this.x+size/1.5, this.y);
+
+					// ---- wings ----
+					noFill();
+					ellipse(this.x+size/5, this.y-size/2, size*0.6, size*0.6);
+					ellipse(this.x+size/3, this.y-size/3, size*0.6, size*0.6);
+				}
+			};
+
+
+			// theoretically, this is the other function they would code
+			this.moveFruitBee = function() {
+
+				var dropFruitNum = (Math.floor(Math.random()*30 + 1));
+
+				// flips randomly
+				if (dropFruitNum === 1) { 
+					// drop a piece of fruit
+					// get random number between 1 and 4
+					var whichFruitNum = (Math.floor(Math.random()*4 + 1));
+					if (whichFruitNum === 1) { 
+						fruits.push(new Apple(this.x, this.y));
+					} else if (whichFruitNum === 2) { 
+						fruits.push(new Grapes(this.x, this.y));
+					} else if (whichFruitNum === 3) { 
+						//fruits.push(new Banana(this.x, this.y));
+
+					} else { 
+
+					}
+					
+				} 
+
+				// normal movement, flipping when it gets to either edge
+				if (this.isFacingRight) { // going right
+					if (this.x > CANVAS_WIDTH-this.size*2) { // hits right side
+						this.isFacingRight = !this.isFacingRight; // this is most likely not how they're going to switch it, but you know
+					} else { 
+						this.x = this.x + this.speed;
+					}
+				} else { // going left
+					if (this.x < this.size/2) { // hits left side
+						this.isFacingRight = !this.isFacingRight;
+					} else {
+						this.x = this.x - this.speed;
+					}
+				}
+			}; // close moveFruitBee
+		}; // close FruitBee
+
+		// -----------------------------------------------------------
+		// ------------------ FRUITS ---------------------------------
+		// -----------------------------------------------------------
+
+		var Apple = function(initialX, initialY) { 
+			this.x = initialX; 
+			this.y = initialY;
+
+			this.drawFruit = function() { 
+				fill(255,0,0);
+				ellipse(this.x, this.y, 10,10);
+				fill(0, 255, 0);
+				triangle(this.x, this.y-5, this.x+3, this.y-8, this.x+5, this.y-8);
+			}
+
+			this.moveFruit = function() { 
+				this.y++;
+			}	
+		}; // close apple
+
+		var Grapes = function(initialX, initialY) { 
+			this.x = initialX; 
+			this.y = initialY; 
+
+			this.drawFruit = function() { 
+				fill(148,0,211);
+				ellipse(this.x, this.y, 5, 5);
+				ellipse(this.x+5, this.y, 5, 5);
+				ellipse(this.x+10, this.y, 5, 5)
+				ellipse(this.x+2.5, this.y+5, 5, 5);
+				ellipse(this.x+7.5, this.y+5, 5, 5);
+				ellipse(this.x+5, this.y+10, 5, 5);
+				fill(0, 255, 0);
+				triangle(this.x+5, this.y-2.5, this.x, this.y-8, this.x+10, this.y-8);
+			}
+
+			this.moveFruit = function() { 
+				this.y++;
+			}
+		}; // close grapes
+
+		var Banana = function() { 
+
+
+		};
+
+
+		var busyBee1;
+		var fruitBee1;
+
+		size(CANVAS_WIDTH, CANVAS_HEIGHT);
+        background(0,191,255);
+        busyBee1 = new BusyBee(200, 200, 100, [255,30,30],[0,200,0], true);
+        fruitBee1 = new FruitBee(400, 400, 50, [255,105,180], [216,191,216], true);
+
+		void draw(){  
+			background(0, 191, 255);
+            busyBee1.drawBusyBee();
+            busyBee1.moveBusyBee();
+            fruitBee1.drawFruitBee();
+            fruitBee1.moveFruitBee();
+
+            // drops fruits
+            for (var i = fruits.length-1; i >= 0; i--) { 
+            	if (fruits[i].y > CANVAS_HEIGHT + 10) {
+            		fruits.splice(i, 1);
+            	} else {
+            		fruits[i].drawFruit();
+	            	fruits[i].moveFruit();
+            	}
+            }
+            println("Number of fruits: " + fruits.length); // testing to make sure that they dissapear
+		}
+               
+		
+		</script>
+	</head>
+	<body>
+		<canvas id="mycanvas"></canvas>
+	</body>
+</html>
