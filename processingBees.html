@@ -2,7 +2,20 @@
 	<head>
 		<title>Bees?</title>
 		<script src="http://cloud.github.com/downloads/processing-js/processing-js/processing-1.4.1.min.js"></script>
+		<script src="givenFunctionality.js"></script>
 		<script type="text/processing" data-processing-target="mycanvas">
+
+		// SAMANTHA VOIGT
+		// 7-22-15
+		// This was adapted from a Wellesley College CS111 assignment. Credit for the original idea & design of the animation does not belong to me. 
+
+		// Things they will have to know: 
+		//     * in order to flip the bees, they need to change the isFacingRight boolean attribute -- that's it!
+		//     * in order to drop a fruit, they need to push a new fruit (they need to make an instance) onto the fruit array (global variable) -- that's it!
+		//     * fruit classes should take 2 params --> initial x and intial y position
+		//     * maybe explain how to change a boolean with the not (!) operator? 
+
+		// I think I did a fairly good job of abstracting the complicated things I had to do to transfer this into using processing.js away from the code they have to work with. Both flipping and dropping a fruit in the FruitBee and BusyBee classes' move functions are just 1 line of code for them. -- But please let me know if I should do some more work on making something more uncomplicated.
 
 		var CANVAS_HEIGHT = 600;
 		var CANVAS_WIDTH = 800;
@@ -61,13 +74,15 @@
 				}
 			};
 
-
+			// *************************************************************************
+			// *********** COMPLETE THE CODE FOR THIS FUNCTION *************************
+			// *************************************************************************
 			// theoretically, this is one of the functions they would code
 			this.moveBusyBee = function() {
 
 				// need good scaffolding on how we program "chance" using random
 
-				// gets a random number between 1 and 30 -- might want to provide this code, since it's not obvious. Otherwise it could be a challenge about reading documentation?
+				// gets a random number between 1 and 30 -- might want to provide this line of code, since it's not obvious. Otherwise it could be a challenge about reading documentation/googling?
 				// I found line 62 really easily on W3C when looking for random numbers in a range in javascript.
 				var randomNum = (Math.floor(Math.random()*30 + 1));
 
@@ -78,7 +93,7 @@
 
 				// normal movement, flipping when it gets to either edge
 				if (this.isFacingRight) { // going right
-					if (this.x > CANVAS_WIDTH-this.size) { // hits right side
+					if (this.x > CANVAS_WIDTH-this.size/2) { // hits right side
 						this.isFacingRight = !this.isFacingRight; // this is most likely not how they're going to switch it, but you know
 					} else { 
 						this.x = this.x + this.speed;
@@ -91,6 +106,7 @@
 					}
 				}
 			}; // close moveBusyBee
+		// ************************************************************************************************
 		}; // close BusyBee
 
 
@@ -145,12 +161,15 @@
 			};
 
 
+			// *************************************************************************
+			// *********** COMPLETE THE CODE FOR THIS FUNCTION *************************
+			// *************************************************************************
 			// theoretically, this is the other function they would code
 			this.moveFruitBee = function() {
 
-				var dropFruitNum = (Math.floor(Math.random()*30 + 1));
+				var dropFruitNum = (Math.floor(Math.random()*100 + 1));
 
-				// flips randomly
+				// drops fruit randomly
 				if (dropFruitNum === 1) { 
 					// drop a piece of fruit
 					// get random number between 1 and 4
@@ -160,17 +179,16 @@
 					} else if (whichFruitNum === 2) { 
 						fruits.push(new Grapes(this.x, this.y));
 					} else if (whichFruitNum === 3) { 
-						//fruits.push(new Banana(this.x, this.y));
-
+						fruits.push(new Banana(this.x, this.y));
 					} else { 
-
+						fruits.push(new Blueberry(this.x, this.y));
 					}
 					
 				} 
 
 				// normal movement, flipping when it gets to either edge
 				if (this.isFacingRight) { // going right
-					if (this.x > CANVAS_WIDTH-this.size*2) { // hits right side
+					if (this.x > CANVAS_WIDTH-this.size/2) { // hits right side
 						this.isFacingRight = !this.isFacingRight; // this is most likely not how they're going to switch it, but you know
 					} else { 
 						this.x = this.x + this.speed;
@@ -183,12 +201,11 @@
 					}
 				}
 			}; // close moveFruitBee
+		// ************************************************************************************************
 		}; // close FruitBee
 
-		// -----------------------------------------------------------
-		// ------------------ FRUITS ---------------------------------
-		// -----------------------------------------------------------
 
+		// ------------ FRUITS -----------------
 		var Apple = function(initialX, initialY) { 
 			this.x = initialX; 
 			this.y = initialY;
@@ -226,19 +243,46 @@
 			}
 		}; // close grapes
 
-		var Banana = function() { 
+		var Banana = function(initialX, initialY) { 
+			this.x = initialX; 
+			this.y = initialY;
 
+			this.drawFruit = function() { 
+				fill(255,255,0);
+				quad(this.x, this.y, this.x-10, this.y-10, this.x-5, this.y, this.x-10, this.y+10, this.x, this.y);
+			}; 
+
+			this.moveFruit = function() { 
+				this.y++;
+			};
+
+		}; // close banana
+
+		var Blueberry = function(initialX, initialY) { 
+			this.x = initialX; 
+			this.y = initialY;
+
+			this.drawFruit = function() { 
+				fill(0,0,205);
+				ellipse(this.x, this.y, 5, 5);
+			}; 
+
+			this.moveFruit = function() { 
+				this.y++;
+			};
 
 		};
-
-
-		var busyBee1;
-		var fruitBee1;
+		
+		// ************************************************************************************************
+		// ***** Everything past here is pre-set-up testing, no need for the girls to worry about it ******
+		// ********** If they get the functions above to work out correctly, this will run! Once they get to run, they can update colors, add more bees, etc... **********
 
 		size(CANVAS_WIDTH, CANVAS_HEIGHT);
         background(0,191,255);
-        busyBee1 = new BusyBee(200, 200, 100, [255,30,30],[0,200,0], true);
-        fruitBee1 = new FruitBee(400, 400, 50, [255,105,180], [216,191,216], true);
+        var busyBee1 = new BusyBee(200, 100, 100, [255,30,30],[0,200,0], true);
+        var fruitBee1 = new FruitBee(400, 400, 50, [255,105,180], [216,191,216], true);
+        var busyBee2 = new BusyBee(500, 300, 150, [255,165,0],[32,178,170], true);
+        var fruitBee2 = new FruitBee(100, 250, 60, [123,104,238],[205,201,201], true);
 
 		void draw(){  
 			background(0, 191, 255);
@@ -246,18 +290,25 @@
             busyBee1.moveBusyBee();
             fruitBee1.drawFruitBee();
             fruitBee1.moveFruitBee();
+            busyBee2.drawBusyBee(); 
+            busyBee2.moveBusyBee();
+            fruitBee2.drawFruitBee();
+            fruitBee2.moveFruitBee();
 
-            // drops fruits
-            for (var i = fruits.length-1; i >= 0; i--) { 
-            	if (fruits[i].y > CANVAS_HEIGHT + 10) {
-            		fruits.splice(i, 1);
-            	} else {
-            		fruits[i].drawFruit();
-	            	fruits[i].moveFruit();
-            	}
-            }
-            println("Number of fruits: " + fruits.length); // testing to make sure that they dissapear
-		}
+            dropFruits();
+        };
+
+        var dropFruits = function() { 
+	      	for (var i = fruits.length-1; i >= 0; i--) { 
+		      	if (fruits[i].y > CANVAS_HEIGHT + 10) {
+		      		fruits.splice(i, 1);
+		      	} else {
+		      		fruits[i].drawFruit();
+		            	fruits[i].moveFruit();
+		      	}
+	    	} // close for
+	      //println("Number of fruits: " + fruits.length); // testing to make sure that they dissapear
+		};
                
 		
 		</script>
