@@ -9,25 +9,31 @@
 		// Last edit: 7-23-15
 		// This was adapted from a Wellesley College CS111 assignment. Credit for the original idea & design of the animation does not belong to me. 
 
-		// Things they will have to know: 
-		//     * in order to flip the bees, they need to change the isFacingRight boolean attribute -- that's it!
-		//     * in order to drop a fruit, they need to push a new fruit (they need to make an instance) onto the fruits array (global variable) -- that's it!
-		//     * fruit classes should take 2 params --> initial x and intial y position
-		//     * maybe explain how to change a boolean with the not (!) operator? 
+		// Important things to know: 
+		//   * In order to flip a bee, simply change the isFacingRight boolean property/attribute. For example, 
+		//			if it is false, change it to true, and vice versa. Sam's programmed it so this works.
+		//	 * In order to drop a fruit, simply push an instance of a fruit object/class onto the fruits array.
+		//			(the array is literally called fruits-- it's declared at the top). Again, I've programmed
+		//			this so it works for you!
+		//   * Looking to change a boolean (true or false) without if statements? Look into the "not" operator--
+		//			(hint: it's the exclamation point)
+		//   * Want an example of how this code will run when you finish?
+		//           Go to www.samanthavoigt.com/teachingBees.html
 
-		// I think I did a fairly good job of abstracting the complicated things I had to do to transfer this into using processing.js away from the code they have to work with. Both flipping and dropping a fruit in the FruitBee and BusyBee classes' move functions are just 1 line of code for them. -- But please let me know if I should do some more work on making something more uncomplicated.
 
+
+		// Take note of these variables! You might need them later!
 		var CANVAS_HEIGHT = 600;
 		var CANVAS_WIDTH = 800;
-
-		// will hold the fruits that need to be dropped
-		// if you want to know why I had to make this exist, ask... I haven't figured out how to explain it in a comment just yet
-		var fruits = [];
+		var fruits = []; // Will hold all the fruits that are dropping
 
 		// -----------------------------------------------------------
 		// ---------------- BUSY BEE ---------------------------------
 		// -----------------------------------------------------------
-		// class definition provided
+		// Most of the code (like 80%) in this class is provided for you. 
+		// That doesn't mean that you don't need to use some of the properties I've 
+		// given to this class. Try and figure it out yourself by reading what I've 
+		// already written. Can't figure out which ones? Ask for a hint!
 		var BusyBee = function(initialX, initialY, size, color1, color2, isFacingRight) { 
 			this.x = initialX;
 			this.y = initialY;
@@ -38,6 +44,7 @@
 			this.speed = (1/this.size) * 250; // speed is a function of size
 
 			// draw function is provided
+			// No need to worry about the drawBusyBeeFunction at all
 			this.drawBusyBee = function() { 
 				// ---- body ----
 				fill(color1[0], color1[1], color1[2]);
@@ -55,7 +62,6 @@
 					// ---- stinger ----
 					fill(0,0,0);
 					triangle(this.x - size/2, this.y-size/20, this.x - size/2, this.y+size/20, this.x-size/1.5, this.y);
-
 					// ---- wings ----
 					noFill();
 					ellipse(this.x-size/5, this.y-size/2, size*0.6, size*0.6);
@@ -67,7 +73,6 @@
 					// ---- stinger ----
 					fill(0,0,0);
 					triangle(this.x + size/2, this.y+size/20, this.x + size/2, this.y-size/20, this.x+size/1.5, this.y);
-
 					// ---- wings ----
 					noFill();
 					ellipse(this.x+size/5, this.y-size/2, size*0.6, size*0.6);
@@ -78,42 +83,29 @@
 			// *************************************************************************
 			// *********** COMPLETE THE CODE FOR THIS FUNCTION *************************
 			// *************************************************************************
-			// theoretically, this is one of the functions they would code
+			// This function is very empty! Think you can help? 
+			// In case you forgot, this is what moveBusyBee should do: 
+			//		* Move a Busy Bee across the screen normally, using the speed that 
+			//				Sam has already calculated for you!
+			//		* When a Busy Bee "hits" the side of the canvas, he turns around!
+			//		* Randomly, a Busy Bee will change direction while still moving back
+			//				and forth across the canvas.
 			this.moveBusyBee = function() {
 
-				// need good scaffolding on how we program "chance" using random
+				// Fill in your code here!
 
-				// gets a random number between 1 and 30 -- might want to provide this line of code, since it's not obvious. Otherwise it could be a challenge about reading documentation/googling?
-				// I found line 62 really easily on W3C when looking for random numbers in a range in javascript.
-				var randomNum = (Math.floor(Math.random()*30 + 1));
-
-				// flips randomly
-				if (randomNum === 1) { 
-					this.isFacingRight = !this.isFacingRight;
-				} 
-
-				// normal movement, flipping when it gets to either edge
-				if (this.isFacingRight) { // going right
-					if (this.x > CANVAS_WIDTH-this.size/2) { // hits right side
-						this.isFacingRight = !this.isFacingRight; // this is most likely not how they're going to switch it, but you know
-					} else { 
-						this.x = this.x + this.speed;
-					}
-				} else { // going left
-					if (this.x < this.size/2) { // hits left side
-						this.isFacingRight = !this.isFacingRight;
-					} else {
-						this.x = this.x - this.speed;
-					}
-				}
 			}; // close moveBusyBee
-		// ************************************************************************************************
+		// *****************************************************************************
 		}; // close BusyBee
 
 
 		// -----------------------------------------------------------
 		// --------------- FRUIT BEE ---------------------------------
 		// -----------------------------------------------------------
+		// Just like in BusyBee, Most of the code in this class is provided for you. 
+		// That doesn't mean that you don't need to use some of the properties I've 
+		// given to this class. Try and figure it out yourself by reading what I've 
+		// already written. Can't figure out which ones? Ask for a hint!
 		var FruitBee = function(initialX, initialY, size, color1, color2, isFacingRight) { 
 			this.x = initialX;
 			this.y = initialY;
@@ -141,7 +133,6 @@
 					// ---- stinger ----
 					fill(0,0,0);
 					triangle(this.x - size/2, this.y-size/20, this.x - size/2, this.y+size/20, this.x-size/1.5, this.y);
-
 					// ---- wings ----
 					noFill();
 					ellipse(this.x-size/5, this.y-size/2, size*0.6, size*0.6);
@@ -153,7 +144,6 @@
 					// ---- stinger ----
 					fill(0,0,0);
 					triangle(this.x + size/2, this.y+size/20, this.x + size/2, this.y-size/20, this.x+size/1.5, this.y);
-
 					// ---- wings ----
 					noFill();
 					ellipse(this.x+size/5, this.y-size/2, size*0.6, size*0.6);
@@ -165,48 +155,28 @@
 			// *************************************************************************
 			// *********** COMPLETE THE CODE FOR THIS FUNCTION *************************
 			// *************************************************************************
-			// theoretically, this is the other function they would code
+			// This function is also very empty! I'm sure you can help.
+			// In case you forgot, this is what moveFruitBee should do: 
+			//		* Move a Fruit Bee across the screen normally, using the speed that 
+			//				Sam has already calculated for you!
+			//		* When a Fruit Bee "hits" the side of the canvas, she turns around!
+			//		* Randomly, a Fruit Bee will drop a fruit. The fruit that she drops 
+			//				is also random!
 			this.moveFruitBee = function() {
 
-				var dropFruitNum = (Math.floor(Math.random()*100 + 1));
+				// Your code goes here!
 
-				// drops fruit randomly
-				if (dropFruitNum === 1) { 
-					// drop a piece of fruit
-					// get random number between 1 and 4
-					var whichFruitNum = (Math.floor(Math.random()*4 + 1));
-					if (whichFruitNum === 1) { 
-						fruits.push(new Apple(this.x, this.y));
-					} else if (whichFruitNum === 2) { 
-						fruits.push(new Grapes(this.x, this.y));
-					} else if (whichFruitNum === 3) { 
-						fruits.push(new Banana(this.x, this.y));
-					} else { 
-						fruits.push(new Blueberry(this.x, this.y));
-					}
-					
-				} 
-
-				// normal movement, flipping when it gets to either edge
-				if (this.isFacingRight) { // going right
-					if (this.x > CANVAS_WIDTH-this.size/2) { // hits right side
-						this.isFacingRight = !this.isFacingRight; // this is most likely not how they're going to switch it, but you know
-					} else { 
-						this.x = this.x + this.speed;
-					}
-				} else { // going left
-					if (this.x < this.size/2) { // hits left side
-						this.isFacingRight = !this.isFacingRight;
-					} else {
-						this.x = this.x - this.speed;
-					}
-				}
 			}; // close moveFruitBee
-		// ************************************************************************************************
+		// *****************************************************************************
 		}; // close FruitBee
 
 
-		// ------------ FRUITS -----------------
+		// -----------------------------------------------------------
+		// ------------------ FRUITS ---------------------------------
+		// -----------------------------------------------------------
+		// So, I've already made 4 fruits for you. Done coding the move functions?
+		// Try making another fruit! (or changing the super simple blueberry one I've
+		// already made)
 		var Apple = function(initialX, initialY) { 
 			this.x = initialX; 
 			this.y = initialY;
@@ -274,11 +244,14 @@
 
 		};
 		
-		// ************************************************************************************************
-		// ***** Everything past here is pre-set-up testing, no need for the girls to worry about it ******
-		// ********** If they get the functions above to work out correctly, this will run! Once they get to run, they can update colors, add more bees, etc... **********
+		// ****************************************************************
+		// **************** What makes it run, yo. ************************
+		// **************************************************************** 
+		// I'm a pretty cool person, so I've already set up some testing code
+		// for you. Once you start filling in the move functions, try it! Immediate results!
+		// Feel free to change this however you want once you get the move 
+		// functions to work. 
 
-		// or we can make them write their own testing? Idk, Amy, it's up to you.
 
 		size(CANVAS_WIDTH, CANVAS_HEIGHT);
         background(0,191,255);
@@ -301,16 +274,17 @@
             dropFruits();
         };
 
+        // Please don't touch this, otherwise your fruits might not work.
         var dropFruits = function() { 
+        	// looping backwards so that deleting an element while looping won't ruin indexing
 	      	for (var i = fruits.length-1; i >= 0; i--) { 
-		      	if (fruits[i].y > CANVAS_HEIGHT + 10) {
+		      	if (fruits[i].y > CANVAS_HEIGHT + 10) { // if a fruit is off-screen, delete it
 		      		fruits.splice(i, 1);
-		      	} else {
+		      	} else { // otherwise, keep it moving
 		      		fruits[i].drawFruit();
 		            fruits[i].moveFruit();
 		      	}
 	    	} // close for
-	      //println("Number of fruits: " + fruits.length); // testing to make sure that they dissapear once they go off screen`
 		};
                
 		
